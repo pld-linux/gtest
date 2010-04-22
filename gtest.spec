@@ -1,6 +1,6 @@
 #
 # Conditional build:
-%bcond_without	tests		# build without tests.
+%bcond_with	tests		# build without tests.
 
 Summary:	Google C++ testing framework
 Name:		gtest
@@ -33,14 +33,14 @@ This package contains development files for %{name}.
 %setup -q
 
 # Keep a clean copy of samples.
-cp -pr samples samples.orig
+cp -a samples examples
 
 %build
 %configure \
 	--disable-static
 
 # Omit unused direct shared library dependencies.
-# XXX: in pld libtool is patched?
+# XXX: patch pld libtool, currently without this sed -lm is generated on package deps
 sed -i -e 's! -shared ! -Wl,--as-needed\0!g' libtool
 
 %{__make}
@@ -54,12 +54,10 @@ rm -rf $RPM_BUILD_ROOT
 	INSTALL="%{__install} -p" \
 	DESTDIR=$RPM_BUILD_ROOT
 
-find $RPM_BUILD_ROOT -type f -name "*.la" -delete
+rm -f $RPM_BUILD_ROOT%{_libdir}/*.la
 
-# Restore the clean copy of samples.
-# To be later listed against %doc.
-rm -rf samples
-cp -a samples.orig samples
+install -d $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
+cp -a examples/* $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -77,12 +75,11 @@ rm -rf $RPM_BUILD_ROOT
 
 %files devel
 %defattr(644,root,root,755)
-%doc samples
 %attr(755,root,root) %{_bindir}/%{name}-config
-%{_aclocaldir}/%{name}.m4
 %{_libdir}/libgtest.so
 %{_libdir}/libgtest_main.so
-
 %dir %{_includedir}/%{name}
 %{_includedir}/%{name}/*.h
 %{_includedir}/%{name}/internal
+%{_aclocaldir}/%{name}.m4
+%{_examplesdir}/%{name}-%{version}
