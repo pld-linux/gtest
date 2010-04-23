@@ -1,16 +1,20 @@
+# TODO
+# - libgtest.so needs -lpthread
+# - tests fail due some linkage problems
 #
 # Conditional build:
 %bcond_with	tests		# build without tests.
 
 Summary:	Google C++ testing framework
 Name:		gtest
-Version:	1.4.0
+Version:	1.5.0
 Release:	1
 License:	BSD
 Group:		Development/Tools
 URL:		http://code.google.com/p/googletest/
 Source0:	http://googletest.googlecode.com/files/%{name}-%{version}.tar.bz2
-# Source0-md5:	c91de493522cf1b75902d3b3730ff8de
+# Source0-md5:	8b2c3c3f26cb53e64a3109d03a97200a
+BuildRequires:	libtool
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -36,16 +40,15 @@ This package contains development files for %{name}.
 cp -a samples examples
 
 %build
+%{__aclocal}
+%{__autoconf}
+%{__automake}
+%{__libtoolize}
 %configure \
 	--disable-static
 
-# Omit unused direct shared library dependencies.
-# XXX: patch pld libtool, currently without this sed -lm is generated on package deps
-sed -i -e 's! -shared ! -Wl,--as-needed\0!g' libtool
-
 %{__make}
 
-# Two tests fail here, unclear as to why.
 %{?with_tests:make check}
 
 %install
