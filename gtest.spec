@@ -14,7 +14,12 @@ Group:		Development/Tools
 URL:		http://code.google.com/p/googletest/
 Source0:	http://googletest.googlecode.com/files/%{name}-%{version}.tar.bz2
 # Source0-md5:	8b2c3c3f26cb53e64a3109d03a97200a
+BuildRequires:	autoconf
+BuildRequires:	automake
+BuildRequires:	libstdc++-devel
 BuildRequires:	libtool
+BuildRequires:	python
+BuildRequires:	python-modules
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
