@@ -1,0 +1,18 @@
+--- gtest-1.6.0/Makefile.am.orig	2011-04-15 21:49:12.000000000 +0200
++++ gtest-1.6.0/Makefile.am	2011-06-16 13:08:22.272743192 +0200
+@@ -288,15 +288,3 @@
+ # Death tests may produce core dumps in the build directory. In case
+ # this happens, clean them to keep distcleancheck happy.
+ CLEANFILES = core
+-
+-# Disables 'make install' as installing a compiled version of Google
+-# Test can lead to undefined behavior due to violation of the
+-# One-Definition Rule.
+-
+-install-exec-local:
+-	echo "'make install' is dangerous and not supported. Instead, see README for how to integrate Google Test into your build system."
+-	false
+-
+-install-data-local:
+-	echo "'make install' is dangerous and not supported. Instead, see README for how to integrate Google Test into your build system."
+-	false
