@@ -6,7 +6,7 @@ Summary:	Google C++ testing framework
 Summary(pl.UTF-8):	Szkielet testów w C++ stworzony przez Google
 Name:		gtest
 Version:	1.6.0
-Release:	1
+Release:	2
 License:	BSD
 Group:		Development/Tools
 #Source0Download: http://code.google.com/p/googletest/downloads/list
@@ -97,6 +97,8 @@ install -Dp scripts/gtest-config $RPM_BUILD_ROOT%{_bindir}/gtest-config
 
 install -d $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
 cp -a examples/* $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
+install -d $RPM_BUILD_ROOT%{_prefix}/src/gtest/src
+cp -p src/*.cc $RPM_BUILD_ROOT%{_prefix}/src/gtest/src
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -121,6 +123,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libgtest_main.la
 %{_includedir}/gtest
 %{_aclocaldir}/gtest.m4
+%{_prefix}/src/gtest
 %{_examplesdir}/%{name}-%{version}
 
 %files static
