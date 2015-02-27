@@ -6,7 +6,7 @@ Summary:	Google C++ testing framework
 Summary(pl.UTF-8):	Szkielet testów w C++ stworzony przez Google
 Name:		gtest
 Version:	1.7.0
-Release:	2
+Release:	3
 License:	BSD
 Group:		Development/Tools
 #Source0Download: http://code.google.com/p/googletest/downloads/list
