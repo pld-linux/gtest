@@ -9,12 +9,13 @@ Version:	1.7.0
 Release:	5
 License:	BSD
 Group:		Development/Tools
-#Source0Download: http://code.google.com/p/googletest/downloads/list
+#Source0Download: https://github.com/google/googletest/releases
+#Source0:	https://github.com/google/googletest/archive/release-%{version}/%{name}-%{version}.tar.gz
 Source0:	http://googletest.googlecode.com/files/%{name}-%{version}.zip
 # Source0-md5:	2d6ec8ccdf5c46b05ba54a9fd1d130d7
 Patch0:		%{name}-install.patch
 Patch1:		%{name}-link.patch
-URL:		http://code.google.com/p/googletest/
+URL:		https://github.com/google/googletest
 BuildRequires:	autoconf >= 2.59
 BuildRequires:	automake >= 1:1.9
 BuildRequires:	libstdc++-devel
