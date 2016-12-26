@@ -6,7 +6,7 @@ Summary:	Google C++ testing framework
 Summary(pl.UTF-8):	Szkielet testów w C++ stworzony przez Google
 Name:		gtest
 Version:	1.8.0
-Release:	1
+Release:	2
 License:	BSD
 Group:		Development/Tools
 #Source0Download: https://github.com/google/googletest/releases
@@ -166,6 +166,8 @@ cd ../googlemock
 	DESTDIR=$RPM_BUILD_ROOT
 
 %{__rm} $RPM_BUILD_ROOT%{_datadir}/gmock/generator/{README.cppclean,LICENSE,README}
+# gmock CMakeLists.txt expects gtest or ../googletest accessile
+ln -snf ../gtest $RPM_BUILD_ROOT%{_prefix}/src/gmock/gtest
 
 %clean
 rm -rf $RPM_BUILD_ROOT
