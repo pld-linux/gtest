@@ -6,7 +6,7 @@ Summary:	Google C++ testing framework
 Summary(pl.UTF-8):	Szkielet testów w C++ stworzony przez Google
 Name:		gtest
 Version:	1.8.1
-Release:	1
+Release:	2
 License:	BSD
 Group:		Development/Tools
 #Source0Download: https://github.com/google/googletest/releases
@@ -15,6 +15,7 @@ Source0:	https://github.com/google/googletest/archive/release-%{version}/%{name}
 Patch0:		%{name}-install.patch
 Patch1:		%{name}-link.patch
 Patch2:		gmock-install.patch
+Patch3:		%{name}-version.patch
 URL:		https://github.com/google/googletest
 BuildRequires:	autoconf >= 2.59
 BuildRequires:	automake >= 1:1.9
@@ -106,6 +107,7 @@ Google Mock:
 
 %prep
 %setup -q -n googletest-release-%{version}
+%patch3 -p1
 
 cd googletest
 %patch0 -p1

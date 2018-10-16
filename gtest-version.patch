@@ -1,0 +1,42 @@
+--- googletest-release-1.8.1/configure.ac.orig	2018-08-31 17:21:57.000000000 +0200
++++ googletest-release-1.8.1/configure.ac	2018-10-16 16:34:16.015945823 +0200
+@@ -1,5 +1,5 @@
+ AC_INIT([Google C++ Mocking and Testing Frameworks],
+-        [1.8.0],
++        [1.8.1],
+         [googlemock@googlegroups.com],
+         [googletest])
+ 
+--- googletest-release-1.8.1/CMakeLists.txt.orig	2018-08-31 17:21:57.000000000 +0200
++++ googletest-release-1.8.1/CMakeLists.txt	2018-10-16 16:34:29.929279000 +0200
+@@ -5,7 +5,7 @@
+ endif (POLICY CMP0048)
+ 
+ project(googletest-distribution)
+-set(GOOGLETEST_VERSION 1.9.0)
++set(GOOGLETEST_VERSION 1.8.1)
+ 
+ enable_testing()
+ 
+--- googletest-release-1.8.1/googletest/configure.ac.orig	2018-08-31 17:21:57.000000000 +0200
++++ googletest-release-1.8.1/googletest/configure.ac	2018-10-16 16:32:10.055947264 +0200
+@@ -5,7 +5,7 @@
+ # "[1.0.1]"). It also asumes that there won't be any closing parenthesis
+ # between "AC_INIT(" and the closing ")" including comments and strings.
+ AC_INIT([Google C++ Testing Framework],
+-        [1.8.0],
++        [1.8.1],
+         [googletestframework@googlegroups.com],
+         [gtest])
+ 
+--- googletest-release-1.8.1/googlemock/configure.ac.orig	2018-10-16 16:29:59.762615418 +0200
++++ googletest-release-1.8.1/googlemock/configure.ac	2018-10-16 16:34:39.462612224 +0200
+@@ -1,7 +1,7 @@
+ m4_include(../googletest/m4/acx_pthread.m4)
+ 
+ AC_INIT([Google C++ Mocking Framework],
+-        [1.8.0],
++        [1.8.1],
+         [googlemock@googlegroups.com],
+         [gmock])
+ 
