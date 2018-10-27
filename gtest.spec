@@ -6,7 +6,7 @@ Summary:	Google C++ testing framework
 Summary(pl.UTF-8):	Szkielet testów w C++ stworzony przez Google
 Name:		gtest
 Version:	1.8.1
-Release:	2
+Release:	3
 License:	BSD
 Group:		Development/Tools
 #Source0Download: https://github.com/google/googletest/releases
@@ -154,6 +154,16 @@ cd googletest
 	INSTALL="%{__install} -p" \
 	DESTDIR=$RPM_BUILD_ROOT
 
+install -d $RPM_BUILD_ROOT%{_pkgconfigdir}
+for f in gtest.pc gtest_main.pc ; do
+	%{__sed} -e 's,@CMAKE_INSTALL_FULL_LIBDIR@,%{_libdir},' \
+		 -e 's,@CMAKE_INSTALL_FULL_INCLUDEDIR@,%{_includedir},' \
+		 -e 's,@PROJECT_VERSION@,%{version},' \
+		 -e 's,@CMAKE_THREAD_LIBS_INIT@,-pthread,' \
+		 -e 's,@GTEST_HAS_PTHREAD_MACRO@,-DGTEST_HAS_PTHREAD=1,' \
+		cmake/${f}.in >$RPM_BUILD_ROOT%{_pkgconfigdir}/${f}
+done
+
 install -Dp scripts/gtest-config $RPM_BUILD_ROOT%{_bindir}/gtest-config
 
 install -d $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
@@ -193,6 +203,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libgtest.la
 %{_libdir}/libgtest_main.la
 %{_includedir}/gtest
+%{_pkgconfigdir}/gtest.pc
+%{_pkgconfigdir}/gtest_main.pc
 %{_aclocaldir}/gtest.m4
 %{_prefix}/src/gtest
 %{_examplesdir}/%{name}-%{version}
