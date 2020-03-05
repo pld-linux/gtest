@@ -1,0 +1,25 @@
+--- googletest-release-1.10.0/googlemock/CMakeLists.txt.orig	2019-10-03 16:52:15.000000000 +0200
++++ googletest-release-1.10.0/googlemock/CMakeLists.txt	2020-02-28 18:49:56.774541882 +0100
+@@ -100,8 +100,10 @@
+ else()
+   cxx_library(gmock "${cxx_strict}" src/gmock-all.cc)
+   target_link_libraries(gmock PUBLIC gtest)
++  set_target_properties(gmock PROPERTIES VERSION ${GOOGLETEST_VERSION} SOVERSION 0)
+   cxx_library(gmock_main "${cxx_strict}" src/gmock_main.cc)
+   target_link_libraries(gmock_main PUBLIC gmock)
++  set_target_properties(gmock_main PROPERTIES VERSION ${GOOGLETEST_VERSION} SOVERSION 0)
+ endif()
+ # If the CMake version supports it, attach header directory information
+ # to the targets for when we are part of a parent build (ie being pulled
+--- googletest-release-1.10.0/googletest/CMakeLists.txt.orig	2020-02-28 18:58:56.451618201 +0100
++++ googletest-release-1.10.0/googletest/CMakeLists.txt	2020-02-28 18:58:59.334935914 +0100
+@@ -126,7 +126,9 @@
+ # are used for other targets, to ensure that gtest can be compiled by a user
+ # aggressive about warnings.
+ cxx_library(gtest "${cxx_strict}" src/gtest-all.cc)
++set_target_properties(gtest PROPERTIES VERSION ${GOOGLETEST_VERSION} SOVERSION 0)
+ cxx_library(gtest_main "${cxx_strict}" src/gtest_main.cc)
++set_target_properties(gtest_main PROPERTIES VERSION ${GOOGLETEST_VERSION} SOVERSION 0)
+ # If the CMake version supports it, attach header directory information
+ # to the targets for when we are part of a parent build (ie being pulled
+ # in via add_subdirectory() rather than being a standalone build).

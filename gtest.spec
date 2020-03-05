@@ -1,26 +1,22 @@
 #
 # Conditional build:
-%bcond_without	tests		# do not perform "make check"
+%bcond_with	tests		# unit tests (supported only using bazel)
+%bcond_without	static_libs	# static libraries
 #
 Summary:	Google C++ testing framework
 Summary(pl.UTF-8):	Szkielet testów w C++ stworzony przez Google
 Name:		gtest
-Version:	1.8.1
-Release:	3
+Version:	1.10.0
+Release:	1
 License:	BSD
 Group:		Development/Tools
 #Source0Download: https://github.com/google/googletest/releases
 Source0:	https://github.com/google/googletest/archive/release-%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	2e6fbeb6a91310a16efe181886c59596
-Patch0:		%{name}-install.patch
-Patch1:		%{name}-link.patch
-Patch2:		gmock-install.patch
-Patch3:		%{name}-version.patch
+# Source0-md5:	ecd1fa65e7de707cd5c00bdac56022cd
+Patch0:		%{name}-libversion.patch
 URL:		https://github.com/google/googletest
-BuildRequires:	autoconf >= 2.59
-BuildRequires:	automake >= 1:1.9
-BuildRequires:	libstdc++-devel
-BuildRequires:	libtool >= 2:1.5
+BuildRequires:	cmake >= 2.8.8
+BuildRequires:	libstdc++-devel >= 6:4.7
 BuildRequires:	python >= 2.3
 BuildRequires:	python-modules >= 2.3
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -47,7 +43,7 @@ Summary:	Development files for gtest framework
 Summary(pl.UTF-8):	Pliki programistyczne szkieletu gtest
 Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
-Requires:	libstdc++-devel
+Requires:	libstdc++-devel >= 6:4.7
 
 %description devel
 This package contains development files for gtest framework.
@@ -67,16 +63,25 @@ Static gtest libraries.
 %description static -l pl.UTF-8
 Statyczne biblioteki gtest.
 
-%package -n gmock-devel
+%package src
+Summary:	Source code of gtest framework
+Summary(pl.UTF-8):	Kod źródłowy szkieletu gtest
+Group:		Development/Libraries
+Requires:	%{name}-devel = %{version}-%{release}
+
+%description src
+Source code of gtest framework for embedding it in other projects.
+
+%description src -l pl.UTF-8
+Kod źródłowy szkieletu gtest do osadzania go w innych projektach.
+
+%package -n gmock
 Summary:	Google C++ Mocking Framework
 Summary(pl.UTF-8):	Szkielet Google Mock dla C++
-Group:		Development/Libraries
-Requires:	gtest-devel = %{version}-%{release}
-Requires:	libstdc++-devel
-Provides:	gmock = %{version}-%{release}
-Obsoletes:	gmock < 1.6.0-3
+Group:		Libraries
+Requires:	gtest = %{version}-%{release}
 
-%description -n gmock-devel
+%description -n gmock
 Inspired by jMock, EasyMock, and Hamcrest, and designed with C++'s
 specifics in mind, Google C++ Mocking Framework (or Google Mock for
 short) is a library for writing and using C++ mock classes.
@@ -90,7 +95,7 @@ Google Mock:
 - works on Linux, Mac OS X, Windows, Windows Mobile, minGW, and
   Symbian.
 
-%description -n gmock-devel -l pl.UTF-8
+%description -n gmock -l pl.UTF-8
 Google C++ Mocking Framework (w skrócie Google Mock) to zainspirowana
 przez jMock, EasyMock i Hamcrest, zaprojektowana z myślą o specyfice
 C++ biblioteka do pisania i wykorzystywania klas "mock" w C++.
@@ -104,80 +109,114 @@ Google Mock:
 - działa na Linuksie, Mac OS X, Windows, Windows Mobile, minGW oraz
   Symbianie.
 
+%package -n gmock-devel
+Summary:	Development files for gmock framework
+Summary(pl.UTF-8):	Pliki programistyczne szkieletu gmock
+Group:		Development/Libraries
+Requires:	gmock = %{version}-%{release}
+Requires:	gtest-devel = %{version}-%{release}
+
+%description -n gmock-devel
+This package contains development files for gmock framework.
+
+%description -n gmock-devel -l pl.UTF-8
+Ten pakiet zawiera pliki programistyczne szkieletu gmock.
+
+%package -n gmock-static
+Summary:	Static gmock libraries
+Summary(pl.UTF-8):	Statyczne biblioteki gmock
+Group:		Development/Libraries
+Requires:	gmock-devel = %{version}-%{release}
+
+%description -n gmock-static
+Static gmock libraries.
+
+%description -n gmock-static -l pl.UTF-8
+Statyczne biblioteki gmock.
+
+%package -n gmock-src
+Summary:	Source code of gmock framework
+Summary(pl.UTF-8):	Kod źródłowy szkieletu gmock
+Group:		Development/Libraries
+Requires:	%{name}-src = %{version}-%{release}
+Requires:	gmock-devel = %{version}-%{release}
+
+%description -n gmock-src
+Source code of gmock framework for embedding it in other projects.
+
+%description -n gmock-src -l pl.UTF-8
+Kod źródłowy szkieletu gmock do osadzania go w innych projektach.
 
 %prep
 %setup -q -n googletest-release-%{version}
-%patch3 -p1
-
-cd googletest
 %patch0 -p1
-%patch1 -p1
-# Keep a clean copy of samples.
-cp -a samples examples
 
-cd ../googlemock
-%patch2 -p1
-grep -rl bin/env scripts | xargs %{__sed} -i -e '1s,^#!.*python,#!%{__python},'
-
+grep -rl 'bin/env python' googlemock/scripts | xargs %{__sed} -i -e '1s,^#!.*python,#!%{__python},'
 
 %build
-cd googletest
-%{__libtoolize}
-%{__aclocal}
-%{__autoconf}
-%{__autoheader}
-%{__automake}
-%configure
-
+# Note: official build system is now Bazel - but it's extremely distro unfriendly.
+# Use unofficial, community maintained CMake suite.
+%if %{with static_libs}
+install -d build-static
+cd build-static
+%cmake .. \
+	-DBUILD_SHARED_LIBS=OFF
 %{__make}
+cd ..
+%endif
 
-%{?with_tests:%{__make} check}
-
-cd ../googlemock
-%{__libtoolize}
-%{__aclocal}
-%{__autoconf}
-%{__autoheader}
-%{__automake}
-%configure \
-	GTEST_CONFIG=../googletest/scripts/gtest-config \
-	GTEST_CPPFLAGS="-I$PWD/../googletest/include" \
-	GTEST_LDFLAGS="-L$PWD/../googletest/lib/.libs" \
+install -d build
+cd build
+%cmake ..
 
 %{__make}
 
 %install
 rm -rf $RPM_BUILD_ROOT
 
-cd googletest
-%{__make} -j1 install \
-	INSTALL="%{__install} -p" \
+%if %{with static_libs}
+%{__make} -C build-static install \
+	DESTDIR=$RPM_BUILD_ROOT
+%endif
+
+%{__make} -C build install \
 	DESTDIR=$RPM_BUILD_ROOT
 
-install -d $RPM_BUILD_ROOT%{_pkgconfigdir}
-for f in gtest.pc gtest_main.pc ; do
-	%{__sed} -e 's,@CMAKE_INSTALL_FULL_LIBDIR@,%{_libdir},' \
-		 -e 's,@CMAKE_INSTALL_FULL_INCLUDEDIR@,%{_includedir},' \
-		 -e 's,@PROJECT_VERSION@,%{version},' \
-		 -e 's,@CMAKE_THREAD_LIBS_INIT@,-pthread,' \
-		 -e 's,@GTEST_HAS_PTHREAD_MACRO@,-DGTEST_HAS_PTHREAD=1,' \
-		cmake/${f}.in >$RPM_BUILD_ROOT%{_pkgconfigdir}/${f}
-done
+install -d $RPM_BUILD_ROOT%{_bindir}
+%{__sed} -e 's,@PACKAGE_TARNAME@,gtest,' \
+	-e 's,@PACKAGE_VERSION@,%{version},' \
+	-e 's,@prefix@,%{_prefix},' \
+	-e 's,@exec_prefix@,%{_exec_prefix},' \
+	-e 's,@bindir@,%{_bindir},' \
+	-e 's,@libdir@,%{_libdir},' \
+	-e 's,@includedir@,%{_includedir},' \
+	-e 's,@top_srcdir@,%{_prefix}/src/gtest,' \
+	-e 's,@PTHREAD_CFLAGS@,-pthread,' \
+	-e 's,@PTHREAD_LIBS@,-lpthread,' \
+	googletest/scripts/gtest-config.in > $RPM_BUILD_ROOT%{_bindir}/gtest-config
 
-install -Dp scripts/gtest-config $RPM_BUILD_ROOT%{_bindir}/gtest-config
-
+install -d $RPM_BUILD_ROOT%{_prefix}/src/gtest
+cp -pr googletest/{cmake,src,CMakeLists.txt} $RPM_BUILD_ROOT%{_prefix}/src/gtest
 install -d $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
-cp -a examples/* $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
-install -d $RPM_BUILD_ROOT%{_prefix}/src/gtest/src
-cp -p src/*.{cc,h} $RPM_BUILD_ROOT%{_prefix}/src/gtest/src
-cp -pr CMakeLists.txt cmake $RPM_BUILD_ROOT%{_prefix}/src/gtest
+cp -p googletest/samples/* $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
 
-cd ../googlemock
-%{__make} -j1 install \
-	INSTALL="%{__install} -p" \
-	DESTDIR=$RPM_BUILD_ROOT
+install -d $RPM_BUILD_ROOT%{_datadir}/gmock/generator
+cp -pr googlemock/scripts/generator/{cpp,gmock_gen.py} $RPM_BUILD_ROOT%{_datadir}/gmock/generator
 
-%{__rm} $RPM_BUILD_ROOT%{_datadir}/gmock/generator/{README.cppclean,LICENSE,README}
+%{__sed} -e 's,@PACKAGE_TARNAME@,gmock,' \
+	-e 's,@PACKAGE_VERSION@,%{version},' \
+	-e 's,@prefix@,%{_prefix},' \
+	-e 's,@exec_prefix@,%{_exec_prefix},' \
+	-e 's,@bindir@,%{_bindir},' \
+	-e 's,@libdir@,%{_libdir},' \
+	-e 's,@includedir@,%{_includedir},' \
+	-e 's,@top_srcdir@,%{_prefix}/src/gmock,' \
+	-e 's,@GTEST_CONFIG@,%{_bindir}/gtest-config,' \
+	-e 's,@GTEST_VERSION@,%{version},' \
+	googlemock/scripts/gmock-config.in > $RPM_BUILD_ROOT%{_bindir}/gmock-config
+
+install -d $RPM_BUILD_ROOT%{_prefix}/src/gmock
+cp -pr googlemock/{cmake,src,CMakeLists.txt} $RPM_BUILD_ROOT%{_prefix}/src/gmock
 # gmock CMakeLists.txt expects gtest or ../googletest accessile
 ln -snf ../gtest $RPM_BUILD_ROOT%{_prefix}/src/gmock/gtest
 
@@ -189,7 +228,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%doc googletest/{CHANGES,CONTRIBUTORS,LICENSE,README.md}
+%doc googletest/{CONTRIBUTORS,LICENSE,README.md}
 %attr(755,root,root) %{_libdir}/libgtest.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libgtest.so.0
 %attr(755,root,root) %{_libdir}/libgtest_main.so.*.*.*
@@ -200,29 +239,52 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/gtest-config
 %attr(755,root,root) %{_libdir}/libgtest.so
 %attr(755,root,root) %{_libdir}/libgtest_main.so
-%{_libdir}/libgtest.la
-%{_libdir}/libgtest_main.la
 %{_includedir}/gtest
 %{_pkgconfigdir}/gtest.pc
 %{_pkgconfigdir}/gtest_main.pc
-%{_aclocaldir}/gtest.m4
-%{_prefix}/src/gtest
+%{_libdir}/cmake/GTest
 %{_examplesdir}/%{name}-%{version}
 
+%if %{with static_libs}
 %files static
 %defattr(644,root,root,755)
 %{_libdir}/libgtest.a
 %{_libdir}/libgtest_main.a
+%endif
+
+%files src
+%defattr(644,root,root,755)
+%{_prefix}/src/gtest
+
+%files -n gmock
+%defattr(644,root,root,755)
+%doc googlemock/{CONTRIBUTORS,LICENSE,README.md}
+%attr(755,root,root) %{_libdir}/libgmock.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libgmock.so.0
+%attr(755,root,root) %{_libdir}/libgmock_main.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libgmock_main.so.0
 
 %files -n gmock-devel
 %defattr(644,root,root,755)
-%doc googlemock/{CHANGES,CONTRIBUTORS,LICENSE,README.md}
 %attr(755,root,root) %{_bindir}/gmock-config
+%attr(755,root,root) %{_libdir}/libgmock.so
+%attr(755,root,root) %{_libdir}/libgmock_main.so
 %{_includedir}/gmock
-%{_npkgconfigdir}/gmock.pc
+%{_pkgconfigdir}/gmock.pc
+%{_pkgconfigdir}/gmock_main.pc
 %dir %{_datadir}/gmock
 %dir %{_datadir}/gmock/generator
 %attr(755,root,root) %{_datadir}/gmock/generator/gmock_gen.py
 %dir %{_datadir}/gmock/generator/cpp
 %attr(755,root,root) %{_datadir}/gmock/generator/cpp/*.py
+
+%if %{with static_libs}
+%files -n gmock-static
+%defattr(644,root,root,755)
+%{_libdir}/libgmock.a
+%{_libdir}/libgmock_main.a
+%endif
+
+%files -n gmock-src
+%defattr(644,root,root,755)
 %{_prefix}/src/gmock
