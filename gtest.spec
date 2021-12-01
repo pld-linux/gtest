@@ -7,7 +7,7 @@ Summary:	Google C++ testing framework
 Summary(pl.UTF-8):	Szkielet testów w C++ stworzony przez Google
 Name:		gtest
 Version:	1.11.0
-Release:	1
+Release:	2
 License:	BSD
 Group:		Development/Tools
 #Source0Download: https://github.com/google/googletest/releases
@@ -201,18 +201,6 @@ cp -p googletest/samples/* $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
 install -d $RPM_BUILD_ROOT%{_datadir}/gmock/generator
 cp -pr googlemock/scripts/generator/{cpp,gmock_gen.py} $RPM_BUILD_ROOT%{_datadir}/gmock/generator
 
-%{__sed} -e 's,@PACKAGE_TARNAME@,gmock,' \
-	-e 's,@PACKAGE_VERSION@,%{version},' \
-	-e 's,@prefix@,%{_prefix},' \
-	-e 's,@exec_prefix@,%{_exec_prefix},' \
-	-e 's,@bindir@,%{_bindir},' \
-	-e 's,@libdir@,%{_libdir},' \
-	-e 's,@includedir@,%{_includedir},' \
-	-e 's,@top_srcdir@,%{_prefix}/src/gmock,' \
-	-e 's,@GTEST_CONFIG@,%{_bindir}/gtest-config,' \
-	-e 's,@GTEST_VERSION@,%{version},' \
-	googlemock/scripts/gmock-config.in > $RPM_BUILD_ROOT%{_bindir}/gmock-config
-
 install -d $RPM_BUILD_ROOT%{_prefix}/src/gmock
 cp -pr googlemock/{cmake,src,CMakeLists.txt} $RPM_BUILD_ROOT%{_prefix}/src/gmock
 # gmock CMakeLists.txt expects gtest or ../googletest accessile
@@ -226,11 +214,9 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%doc googletest/{CONTRIBUTORS,LICENSE,README.md}
+%doc googletest/README.md
 %attr(755,root,root) %{_libdir}/libgtest.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libgtest.so.0
 %attr(755,root,root) %{_libdir}/libgtest_main.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libgtest_main.so.0
 
 %files devel
 %defattr(644,root,root,755)
@@ -256,15 +242,12 @@ rm -rf $RPM_BUILD_ROOT
 
 %files -n gmock
 %defattr(644,root,root,755)
-%doc googlemock/{CONTRIBUTORS,LICENSE,README.md}
+%doc googlemock/README.md
 %attr(755,root,root) %{_libdir}/libgmock.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libgmock.so.0
 %attr(755,root,root) %{_libdir}/libgmock_main.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libgmock_main.so.0
 
 %files -n gmock-devel
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_bindir}/gmock-config
 %attr(755,root,root) %{_libdir}/libgmock.so
 %attr(755,root,root) %{_libdir}/libgmock_main.so
 %{_includedir}/gmock
