@@ -1,28 +1,28 @@
---- googletest-release-1.11.0/googletest/CMakeLists.txt~	2021-06-11 19:42:26.000000000 +0200
-+++ googletest-release-1.11.0/googletest/CMakeLists.txt	2022-02-14 22:01:48.393482954 +0100
-@@ -138,10 +138,10 @@
- if (DEFINED CMAKE_VERSION AND NOT "${CMAKE_VERSION}" VERSION_LESS "2.8.11")
+--- googletest-release-1.12.1/googletest/CMakeLists.txt.orig	2023-01-16 21:26:08.891283192 +0100
++++ googletest-release-1.12.1/googletest/CMakeLists.txt	2023-01-16 21:27:14.834259281 +0100
+@@ -134,10 +134,10 @@ if (DEFINED CMAKE_VERSION AND NOT "${CMA
+   string(REPLACE ";" "$<SEMICOLON>" dirs "${gtest_build_include_dirs}")
    target_include_directories(gtest SYSTEM INTERFACE
-     "$<BUILD_INTERFACE:${gtest_build_include_dirs}>"
+     "$<BUILD_INTERFACE:${dirs}>"
 -    "$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}>")
 +    "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
    target_include_directories(gtest_main SYSTEM INTERFACE
-     "$<BUILD_INTERFACE:${gtest_build_include_dirs}>"
+     "$<BUILD_INTERFACE:${dirs}>"
 -    "$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}>")
 +    "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
  endif()
- target_link_libraries(gtest_main PUBLIC gtest)
- 
---- googletest-release-1.11.0/googlemock/CMakeLists.txt~	2021-06-11 19:42:26.000000000 +0200
-+++ googletest-release-1.11.0/googlemock/CMakeLists.txt	2022-02-14 22:02:08.163879047 +0100
-@@ -111,10 +111,10 @@
- if (DEFINED CMAKE_VERSION AND NOT "${CMAKE_VERSION}" VERSION_LESS "2.8.11")
+ if(CMAKE_SYSTEM_NAME MATCHES "QNX")
+   target_link_libraries(gtest PUBLIC regex)
+--- googletest-release-1.12.1/googlemock/CMakeLists.txt.orig	2023-01-16 21:26:08.891283192 +0100
++++ googletest-release-1.12.1/googlemock/CMakeLists.txt	2023-01-16 21:27:34.230820868 +0100
+@@ -108,10 +108,10 @@ if (DEFINED CMAKE_VERSION AND NOT "${CMA
+   string(REPLACE ";" "$<SEMICOLON>" dirs "${gmock_build_include_dirs}")
    target_include_directories(gmock SYSTEM INTERFACE
-     "$<BUILD_INTERFACE:${gmock_build_include_dirs}>"
+     "$<BUILD_INTERFACE:${dirs}>"
 -    "$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}>")
 +    "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
    target_include_directories(gmock_main SYSTEM INTERFACE
-     "$<BUILD_INTERFACE:${gmock_build_include_dirs}>"
+     "$<BUILD_INTERFACE:${dirs}>"
 -    "$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}>")
 +    "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
  endif()

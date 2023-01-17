@@ -6,16 +6,16 @@
 Summary:	Google C++ testing framework
 Summary(pl.UTF-8):	Szkielet testów w C++ stworzony przez Google
 Name:		gtest
-Version:	1.11.0
-Release:	3
+Version:	1.12.1
+Release:	1
 License:	BSD
 Group:		Development/Tools
 #Source0Download: https://github.com/google/googletest/releases
 Source0:	https://github.com/google/googletest/archive/release-%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	e8a8df240b6938bb6384155d4c37d937
+# Source0-md5:	e82199374acdfda3f425331028eb4e2a
 Patch0:		cmake.patch
 URL:		https://github.com/google/googletest
-BuildRequires:	cmake >= 2.8.8
+BuildRequires:	cmake >= 3.5
 BuildRequires:	libstdc++-devel >= 6:4.7
 BuildRequires:	python >= 2.3
 BuildRequires:	python-modules >= 2.3
@@ -151,8 +151,6 @@ Kod źródłowy szkieletu gmock do osadzania go w innych projektach.
 %setup -q -n googletest-release-%{version}
 %patch0 -p1
 
-grep -rl 'bin/env python' googlemock/scripts | xargs %{__sed} -i -e '1s,^#!.*python,#!%{__python},'
-
 %build
 # Note: official build system is now Bazel - but it's extremely distro unfriendly.
 # Use unofficial, community maintained CMake suite.
@@ -182,26 +180,10 @@ rm -rf $RPM_BUILD_ROOT
 %{__make} -C build install \
 	DESTDIR=$RPM_BUILD_ROOT
 
-install -d $RPM_BUILD_ROOT%{_bindir}
-%{__sed} -e 's,@PACKAGE_TARNAME@,gtest,' \
-	-e 's,@PACKAGE_VERSION@,%{version},' \
-	-e 's,@prefix@,%{_prefix},' \
-	-e 's,@exec_prefix@,%{_exec_prefix},' \
-	-e 's,@bindir@,%{_bindir},' \
-	-e 's,@libdir@,%{_libdir},' \
-	-e 's,@includedir@,%{_includedir},' \
-	-e 's,@top_srcdir@,%{_prefix}/src/gtest,' \
-	-e 's,@PTHREAD_CFLAGS@,-pthread,' \
-	-e 's,@PTHREAD_LIBS@,-lpthread,' \
-	googletest/scripts/gtest-config.in > $RPM_BUILD_ROOT%{_bindir}/gtest-config
-
 install -d $RPM_BUILD_ROOT%{_prefix}/src/gtest
 cp -pr googletest/{cmake,src,CMakeLists.txt} $RPM_BUILD_ROOT%{_prefix}/src/gtest
 install -d $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
 cp -p googletest/samples/* $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
-
-install -d $RPM_BUILD_ROOT%{_datadir}/gmock/generator
-cp -pr googlemock/scripts/generator/{cpp,gmock_gen.py} $RPM_BUILD_ROOT%{_datadir}/gmock/generator
 
 install -d $RPM_BUILD_ROOT%{_prefix}/src/gmock
 cp -pr googlemock/{cmake,src,CMakeLists.txt} $RPM_BUILD_ROOT%{_prefix}/src/gmock
@@ -222,7 +204,6 @@ rm -rf $RPM_BUILD_ROOT
 
 %files devel
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_bindir}/gtest-config
 %attr(755,root,root) %{_libdir}/libgtest.so
 %attr(755,root,root) %{_libdir}/libgtest_main.so
 %{_includedir}/gtest
@@ -255,11 +236,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/gmock
 %{_pkgconfigdir}/gmock.pc
 %{_pkgconfigdir}/gmock_main.pc
-%dir %{_datadir}/gmock
-%dir %{_datadir}/gmock/generator
-%attr(755,root,root) %{_datadir}/gmock/generator/gmock_gen.py
-%dir %{_datadir}/gmock/generator/cpp
-%attr(755,root,root) %{_datadir}/gmock/generator/cpp/*.py
 
 %if %{with static_libs}
 %files -n gmock-static
