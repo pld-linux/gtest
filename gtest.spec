@@ -6,17 +6,17 @@
 Summary:	Google C++ testing framework
 Summary(pl.UTF-8):	Szkielet testów w C++ stworzony przez Google
 Name:		gtest
-Version:	1.12.1
+Version:	1.13.0
 Release:	1
 License:	BSD
 Group:		Development/Tools
 #Source0Download: https://github.com/google/googletest/releases
-Source0:	https://github.com/google/googletest/archive/release-%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	e82199374acdfda3f425331028eb4e2a
+Source0:	https://github.com/google/googletest/archive/v%{version}/%{name}-%{version}.tar.gz
+# Source0-md5:	95b29f0038ec84a611df951d74d99897
 Patch0:		cmake.patch
 URL:		https://github.com/google/googletest
 BuildRequires:	cmake >= 3.5
-BuildRequires:	libstdc++-devel >= 6:4.7
+BuildRequires:	libstdc++-devel >= 6:5
 BuildRequires:	python >= 2.3
 BuildRequires:	python-modules >= 2.3
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -43,7 +43,7 @@ Summary:	Development files for gtest framework
 Summary(pl.UTF-8):	Pliki programistyczne szkieletu gtest
 Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
-Requires:	libstdc++-devel >= 6:4.7
+Requires:	libstdc++-devel >= 6:5
 
 %description devel
 This package contains development files for gtest framework.
@@ -148,7 +148,7 @@ Source code of gmock framework for embedding it in other projects.
 Kod źródłowy szkieletu gmock do osadzania go w innych projektach.
 
 %prep
-%setup -q -n googletest-release-%{version}
+%setup -q -n googletest-%{version}
 %patch0 -p1
 
 %build
