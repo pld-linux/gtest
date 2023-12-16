@@ -6,16 +6,16 @@
 Summary:	Google C++ testing framework
 Summary(pl.UTF-8):	Szkielet testów w C++ stworzony przez Google
 Name:		gtest
-Version:	1.13.0
+Version:	1.14.0
 Release:	1
 License:	BSD
 Group:		Development/Tools
 #Source0Download: https://github.com/google/googletest/releases
 Source0:	https://github.com/google/googletest/archive/v%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	95b29f0038ec84a611df951d74d99897
+# Source0-md5:	c8340a482851ef6a3fe618a082304cfc
 Patch0:		cmake.patch
 URL:		https://github.com/google/googletest
-BuildRequires:	cmake >= 3.5
+BuildRequires:	cmake >= 3.13
 BuildRequires:	libstdc++-devel >= 6:5
 BuildRequires:	python >= 2.3
 BuildRequires:	python-modules >= 2.3
@@ -155,19 +155,14 @@ Kod źródłowy szkieletu gmock do osadzania go w innych projektach.
 # Note: official build system is now Bazel - but it's extremely distro unfriendly.
 # Use unofficial, community maintained CMake suite.
 %if %{with static_libs}
-install -d build-static
-cd build-static
-%cmake .. \
+%cmake -B build-static \
 	-DBUILD_SHARED_LIBS=OFF
-%{__make}
-cd ..
+%{__make} -C build-static
 %endif
 
-install -d build
-cd build
-%cmake ..
+%cmake -B build
 
-%{__make}
+%{__make} -C build
 
 %install
 rm -rf $RPM_BUILD_ROOT
