@@ -1,5 +1,5 @@
---- googletest-1.14.0/googletest/CMakeLists.txt.orig	2023-12-16 20:46:54.618198769 +0100
-+++ googletest-1.14.0/googletest/CMakeLists.txt	2023-12-16 20:48:29.031020624 +0100
+--- googletest-1.15.2/googletest/CMakeLists.txt.orig	2024-09-08 17:02:41.518431592 +0200
++++ googletest-1.15.2/googletest/CMakeLists.txt	2024-09-08 17:04:15.467922624 +0200
 @@ -143,10 +143,10 @@ set_target_properties(gtest_main PROPERT
  string(REPLACE ";" "$<SEMICOLON>" dirs "${gtest_build_include_dirs}")
  target_include_directories(gtest SYSTEM INTERFACE
@@ -10,7 +10,7 @@
    "$<BUILD_INTERFACE:${dirs}>"
 -  "$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}>")
 +  "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
- if(CMAKE_SYSTEM_NAME MATCHES "QNX")
+ if(CMAKE_SYSTEM_NAME MATCHES "QNX" AND CMAKE_SYSTEM_VERSION VERSION_GREATER_EQUAL 7.1)
    target_link_libraries(gtest PUBLIC regex)
  endif()
 --- googletest-1.14.0/googlemock/CMakeLists.txt.orig	2023-12-16 20:46:54.621532084 +0100

@@ -6,19 +6,17 @@
 Summary:	Google C++ testing framework
 Summary(pl.UTF-8):	Szkielet testów w C++ stworzony przez Google
 Name:		gtest
-Version:	1.14.0
+Version:	1.15.2
 Release:	1
 License:	BSD
 Group:		Development/Tools
 #Source0Download: https://github.com/google/googletest/releases
 Source0:	https://github.com/google/googletest/archive/v%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	c8340a482851ef6a3fe618a082304cfc
+# Source0-md5:	7e11f6cfcf6498324ac82d567dcb891e
 Patch0:		cmake.patch
 URL:		https://github.com/google/googletest
 BuildRequires:	cmake >= 3.13
-BuildRequires:	libstdc++-devel >= 6:5
-BuildRequires:	python >= 2.3
-BuildRequires:	python-modules >= 2.3
+BuildRequires:	libstdc++-devel >= 6:7
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -43,7 +41,7 @@ Summary:	Development files for gtest framework
 Summary(pl.UTF-8):	Pliki programistyczne szkieletu gtest
 Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
-Requires:	libstdc++-devel >= 6:5
+Requires:	libstdc++-devel >= 6:7
 
 %description devel
 This package contains development files for gtest framework.
@@ -154,13 +152,17 @@ Kod źródłowy szkieletu gmock do osadzania go w innych projektach.
 %build
 # Note: official build system is now Bazel - but it's extremely distro unfriendly.
 # Use unofficial, community maintained CMake suite.
+# Force C++17 for std::string_view support.
 %if %{with static_libs}
 %cmake -B build-static \
-	-DBUILD_SHARED_LIBS=OFF
+	-DBUILD_SHARED_LIBS=OFF \
+	-DCMAKE_CXX_STANDARD=17
+
 %{__make} -C build-static
 %endif
 
-%cmake -B build
+%cmake -B build \
+	-DCMAKE_CXX_STANDARD=17
 
 %{__make} -C build
 
