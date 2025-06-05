@@ -147,7 +147,7 @@ Kod źródłowy szkieletu gmock do osadzania go w innych projektach.
 
 %prep
 %setup -q -n googletest-%{version}
-%patch0 -p1
+%patch -P0 -p1
 
 %build
 # Note: official build system is now Bazel - but it's extremely distro unfriendly.
