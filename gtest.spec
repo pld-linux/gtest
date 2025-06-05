@@ -6,13 +6,13 @@
 Summary:	Google C++ testing framework
 Summary(pl.UTF-8):	Szkielet testów w C++ stworzony przez Google
 Name:		gtest
-Version:	1.15.2
+Version:	1.17.0
 Release:	1
 License:	BSD
 Group:		Development/Tools
 #Source0Download: https://github.com/google/googletest/releases
-Source0:	https://github.com/google/googletest/archive/v%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	7e11f6cfcf6498324ac82d567dcb891e
+Source0:	https://github.com/google/googletest/archive/v%{version}/googletest-%{version}.tar.gz
+# Source0-md5:	b6f100bc2a5853a48046aa168ececf84
 Patch0:		cmake.patch
 URL:		https://github.com/google/googletest
 BuildRequires:	cmake >= 3.13
